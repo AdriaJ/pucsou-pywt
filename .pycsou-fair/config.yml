@@ -1,0 +1,9 @@
+# You may use this file to customize how your plugin page appears
+# on the Pycsou-FAIR: https://www.pycsou-fair.org/
+# See their wiki for details https://github.com/matthieumeo/pycsou-fair/wiki
+
+# Please note that this file should only be used IN ADDITION to entering
+# metadata fields (such as summary, description, authors, and various URLS)
+# in your standard python package metadata (e.g. setup.cfg, setup.py, or
+# pyproject.toml), when you would like those fields to be displayed
+# differently on the Pycsou-FAIR than in the Pycsou application.
