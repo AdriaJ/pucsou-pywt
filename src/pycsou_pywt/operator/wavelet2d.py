@@ -71,7 +71,7 @@ class WaveletDec2(pyco.LinOp):
             print(proj_image.shape == test_image.shape)
         """
         assert len(input_shape) == 2, f"The input shape must be a size 2 tuple, given has length {len(input_shape)}."
-        self.image_shape = input_shape
+        self.input_shape = input_shape
         if wavelet_name in pywt.wavelist(family="bior") or wavelet_name in pywt.wavelist(family="rbio"):
             raise Warning(
                 "Wavelets of the family 'bior' and 'rbio' are not unitary in mode 'zero', the adjoint is not "
@@ -94,7 +94,7 @@ class WaveletDec2(pyco.LinOp):
         assert level >= 0, "Decomposition level should non-negative or None."
         self._level = level
         self._mode = mode
-        init_coeffs = pywt.wavedec2(np.zeros(self.image_shape), self._wavelet, mode=self._mode, level=self._level)
+        init_coeffs = pywt.wavedec2(np.zeros(self.input_shape), self._wavelet, mode=self._mode, level=self._level)
         arr, slices = pywt.coeffs_to_array(init_coeffs, axes=(-2, -1))
         self.coeff_slices = slices
         self.coeff_shape = arr.shape
@@ -105,7 +105,7 @@ class WaveletDec2(pyco.LinOp):
 
     @pycrt.enforce_precision(i="arr")
     def apply(self, arr: pyct.NDArray) -> pyct.NDArray:
-        raster_image = arr.reshape(*arr.shape[:-1], *self.image_shape)
+        raster_image = arr.reshape(*arr.shape[:-1], *self.input_shape)
         coeffs = pywt.wavedec2(
             raster_image,
             self._wavelet,
@@ -121,7 +121,7 @@ class WaveletDec2(pyco.LinOp):
             slices = self.coeff_slices
         else:
             _, slices = pywt.coeffs_to_array(
-                pywt.wavedec2(np.zeros((*arr.shape[:-1], *self.image_shape)), self._wavelet, level=self._level),
+                pywt.wavedec2(np.zeros((*arr.shape[:-1], *self.input_shape)), self._wavelet, level=self._level),
                 axes=(-2, -1),
             )
         coeffs = pywt.array_to_coeffs(raster_arr, slices, output_format="wavedec2")
@@ -154,7 +154,7 @@ class WaveletDec2(pyco.LinOp):
             (..., *self.image_shape) 2D image with correct size.
 
         """
-        odd_test = [dim % 2 == 1 for dim in self.image_shape]
+        odd_test = [dim % 2 == 1 for dim in self.input_shape]
         if np.any(odd_test):
             s = (slice(None, None, None),) * (np.ndim(arr) - 2) + tuple(
                 slice(None, -1 if elem else None, None) for elem in odd_test
