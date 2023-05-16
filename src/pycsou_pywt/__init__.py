@@ -5,8 +5,6 @@ except ImportError:
 
 from .operator import WaveletDec2, stackedWaveletDec
 
-# from .operator import Flip, NullFunc
-
 __all__ = (
     "WaveletDec2",
     "stackedWaveletDec",
