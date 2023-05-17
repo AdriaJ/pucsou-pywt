@@ -3,14 +3,21 @@
 
 
 Welcome to Pycsou-PyWavelets's documentation!
-==================================
-src
-===
+=============================================
 
 .. toctree::
-   :caption: Contents:
+   :caption: Contents
+   :maxdepth: 2
 
-   modules
+.. include:: ../README.rst
+
+
+.. toctree::
+   :caption: Contents
+
+   pycsou_pywt
+   examples
+   pycsou_pywt_tests
    references
 
 

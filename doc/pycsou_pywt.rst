@@ -1,18 +1,10 @@
-Pycsou-PyWavelets package
-=========================
+Pycsou-PyWavelets
+=================
 
-Subpackages
------------
+The package provides linear operators to perform the wavelet decomposition operations, which are accessible in the
+module :py:mod:`pycsou_pywt.operator`.
 
 .. toctree::
+    :maxdepth: 2
 
-   pycsou_pywt.operator
-
-
-Module contents
----------------
-
-.. automodule:: pycsou_pywt
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    pycsou_pywt.operator
