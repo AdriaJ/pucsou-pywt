@@ -65,6 +65,8 @@ Todo list
     - diff_lipschitz, lipschitz and svdvals are still causing troubles
 - Finish README.rst file
 - Link the doc with Pycsou's doc so that we can access the references target.
+- Fix the display format of the references
+- Fix the badges
 
 
 .. _Python: https://www.python.org/
