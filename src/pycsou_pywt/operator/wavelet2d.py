@@ -1,7 +1,11 @@
+import warnings
+
 import numpy as np
 import pycsou.abc.operator as pyco
 import pycsou.runtime as pycrt
+import pycsou.util.deps as pycd
 import pycsou.util.ptype as pyct
+import pycsou.util.warning as pycuw
 import pywt
 
 __all__ = [
@@ -101,7 +105,8 @@ class WaveletDec2(pyco.LinOp):
             level = max_level
         elif level > max_level:
             level = max_level
-            raise Warning(f"Requested level of decomposition too high, auto-corrected to {level}")
+            msg = f"Requested level of decomposition too high, auto-corrected to {level}"
+            warnings.warn(msg, pycuw.AutoInferenceWarning)
         assert level >= 0, "Decomposition level should non-negative or None."
         self._level = level
         self._mode = mode
@@ -143,6 +148,10 @@ class WaveletDec2(pyco.LinOp):
         )
         return self._odd_cropping(res).reshape(*arr.shape[:-1], -1)
 
+    @pycrt.enforce_precision()
+    def svdvals(self, **kwargs) -> pyct.NDArray:
+        return pyco.UnitOp.svdvals(self, **kwargs)
+
     @property
     def level(self):
         r"""
@@ -176,6 +185,13 @@ class WaveletDec2(pyco.LinOp):
             return arr[s]
         else:
             return arr
+
+    def asarray(self, **kwargs) -> pyct.NDArray:
+        dtype = kwargs.get("dtype", pycrt.getPrecision().value)
+        xp = kwargs.get("xp", pycd.NDArrayInfo.NUMPY.module())
+
+        A = super().asarray(dtype=dtype, xp=np)
+        return xp.asarray(A)
 
 
 # TODO test wavelet 2d and potentially extend to more dimensions, write tests: apply, adjoint
