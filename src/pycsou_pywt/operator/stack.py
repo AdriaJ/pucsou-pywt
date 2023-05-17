@@ -20,7 +20,7 @@ def stackedWaveletDec(
     Computes the decomposition of an image according to different wavelet bases, stacked together in a single array.
     Optionally, include the identity operator among the list of operators.
 
-    ``wl_list`` and ''level_list`` parameters can be specified as list or single elements. When only an element is
+    ``wl_list`` and ``level_list`` parameters can be specified as list or single elements. When only an element is
     provided, it is used for all the wavelet operators considered.
 
     Refer to :py:class:`~pycsou_pywt.operator.wavelet2d.WaveletDec2` for a description of the parameters.

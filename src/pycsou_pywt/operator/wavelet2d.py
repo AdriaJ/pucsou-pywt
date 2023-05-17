@@ -10,19 +10,25 @@ __all__ = [
 
 
 class WaveletDec2(pyco.LinOp):
-    def __init__(self, input_shape: pyct.NDArrayShape, wavelet_name: str, level=None, mode="zero"):
+    """
+    Linear operator for wavelet coefficients decomposition.
+    """
+
+    def __init__(self, input_shape: pyct.NDArrayShape, wavelet_name: str, level: int = None, mode: str = "zero"):
         r"""
         2D Wavelet decomposition operator.
+
         Returns the 2-dimensional wavelet decomposition coefficients, according to the selected wavelet basis and up to
         the chosen level of details.
+
         The computations are performed thanks to the Python package `PyWavelets <https://pywavelets.readthedocs.io/en/latest/index.html>`_.
         With a correct set of parameters, the wavelet transform is unitary so that the adjoint can be efficiently
         computed as the inverse transform (also provided by PyWavelets).
 
         Parameters
         ----------
-        input_shape: pyct.NDArrayShape (..., m, n)
-            Shape of the images to apply the decomposition of, must be a 2-dimensional tuple.
+        input_shape: pyct.NDArrayShape
+            (..., m, n) Shape of the images to apply the decomposition of, must be a 2-dimensional tuple.
         wavelet_name: str
             Name of the wavelet basis to use, must be one of the discrete
         level: int
@@ -35,21 +41,27 @@ class WaveletDec2(pyco.LinOp):
 
         Notes
         -----
-        * As per Pycsou guidelines, the operator accepts input with more than two dimensions. The wavelet transform is
-        applied to the last two dimensions of the input array (as long as the shape is consistent with ``input_shape``).
+
+        * As per Pycsou guidelines, the operator accepts input with more than two dimensions. The wavelet
+          transform is applied to the last two dimensions of the input array (as long as the shape is consistent with
+          ``input_shape``).
+
         * Only the value ``mode='zero'`` ensures that the wavelet decomposition operation is unitary, such that its
-        adjoint operator is given by the inverse operator. When used with other values of ``mode``, the adjoint
-        operation is no longer valid.
+          adjoint operator is given by the inverse operator. When used with other values of ``mode``, the adjoint
+          operation is no longer valid.
+
         * The list of discrete wavelets accessible is accessible with
-        `pywt.wavelist(kind='discrete') <https://pywavelets.readthedocs.io/en/latest/ref/wavelets.html#built-in-wavelets-wavelist>`_.
-        The "Biorthogonal" (``'bior'``) and "Reverse Biorthogonal" (``'rbio'``) wavelet families are not unitary when
-        computed with mode ``'zero'``, so the adjoint is no longer correct for these wavelets.
+          `pywt.wavelist(kind='discrete') <https://pywavelets.readthedocs.io/en/latest/ref/wavelets.html#built-in-wavelets-wavelist>`_.
+          The "Biorthogonal" (``'bior'``) and "Reverse Biorthogonal" (``'rbio'``) wavelet families are not unitary when
+          computed with mode ``'zero'``, so the adjoint is no longer correct for these wavelets.
+
         * The operator only supports Numpy backend so far (needs to be tested for Dask backend, not available for CuPy).
 
         Example
         -------
 
         .. code-block:: python3
+
             import numpy as np
             import pycsou_pywt as pycwt
 
@@ -67,6 +79,7 @@ class WaveletDec2(pyco.LinOp):
             proj_image = op.adjoint(coeffs)
 
             print(proj_image.shape == test_image.shape)
+
         """
         assert len(input_shape) == 2, f"The input shape must be a size 2 tuple, given has length {len(input_shape)}."
         self.input_shape = input_shape
@@ -132,6 +145,9 @@ class WaveletDec2(pyco.LinOp):
 
     @property
     def level(self):
+        r"""
+        Getter for the attribute ``level``, useful when the value has been auto-set (``None`` input or level too high).
+        """
         return self._level
 
     def _odd_cropping(self, arr: np.ndarray) -> np.ndarray:
@@ -170,26 +186,6 @@ if __name__ == "__main__":
     modes = ["zero", "symmetric"]  # Only zero padding works for auto-adjoint operator
     wls = ["db1", "db3", "db5"]
     levels = [1, 2, None]
-    for mode in modes:
-        print("Mode " + mode + " :")
-        for wl in wls:
-            print("\tWavelet " + wl + " :")
-            for level in levels:
-                print("\t\tLevel {} :".format(level))
-                wdec = WaveletDec2(image_shape, wl, level=level, mode=mode)
-                print("\t\t\tLipschitz value: {}".format(wdec.lipschitz(tol=1e-3)))
-                a = abs(np.random.normal(size=image_shape)).flatten()
-                b = abs(np.random.normal(size=wdec.coeffs_shape)).flatten()
-                print("\t\t\tShape of the decomposition:", wdec(a).shape)
-                print("\t\t\t\tCorrect adjoint: ", np.allclose(np.dot(wdec(a), b), np.dot(a, wdec.adjoint(b))))
-
-                a = abs(np.random.normal(size=(5,) + image_shape)).reshape((5, -1))
-                b = abs(np.random.normal(size=(5,) + wdec.coeffs_shape)).reshape((5, -1))
-                print("\t\t\tShape of the decomposition:", wdec(a).shape)
-                print(
-                    "\t\t\t\tCorrect adjoint: ",
-                    np.allclose(np.sum(wdec(a) * b, axis=1), np.sum(a * wdec.adjoint(b), axis=1)),
-                )
 
     # ## Test stack
     # wl_list = pywt.wavelist('db')[:8]
