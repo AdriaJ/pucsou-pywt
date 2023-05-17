@@ -100,6 +100,10 @@ intersphinx_mapping = {
     "NumPy [latest]": ("https://docs.scipy.org/doc/numpy", None),
     "SciPy [latest]": ("https://docs.scipy.org/doc/scipy/reference", None),
     "dask [latest]": ("https://docs.dask.org/en/latest", None),
+    "pycsou": (
+        "https://github.com/matthieumeo/pycsou/tree/v2-dev/doc",
+        None,
+    ),  # todo do a correct mapping to Pycsou-s documentation
 }
 
 # -- Options for napoleon extension ------------------------------------------
