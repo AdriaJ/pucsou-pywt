@@ -5,15 +5,13 @@ name: Test and deploy
 
 on:
   push:
-    branches:
-      - main
-      - npe2
+#    branches:
+#      - main
     tags:
       - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
   pull_request:
     branches:
       - main
-      - npe2
   workflow_dispatch:
 
 jobs:
