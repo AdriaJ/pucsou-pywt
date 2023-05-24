@@ -28,6 +28,8 @@ def stackedWaveletDec(
 
     Parameters
     ----------
+    input_shape: pyct.NDArrayShape
+        (..., m, n) Shape of the images to apply the decomposition of, must be a 2-dimensional tuple.
     include_id: bool
         If ``True``, the identity operation is included among the wavelet transforms.
 
@@ -52,4 +54,30 @@ def stackedWaveletDec(
     if include_id:
         op_list.append(pycop.IdentityOp(dim=input_shape[0] * input_shape[1]))
 
-    return (1.0 / np.sqrt(length)) * pycop.stack(op_list, axis=0)
+    res_op = (1.0 / np.sqrt(length)) * pycop.stack(op_list, axis=0)
+    res_op._lipschitz = 1.0
+
+    return res_op
+
+
+if __name__ == "__main__":
+    import time
+
+    import pywt
+
+    ## Test stack
+    wl_list = pywt.wavelist("sym")[:8]
+    input_shape = (256, 256)
+    stack = stackedWaveletDec(input_shape, wl_list, None)
+    start = time.time()
+    print(stack._lipschitz, stack.lipschitz(tight=True))
+    print(f"Computation time of the Lipschitz constant: {time.time() - start:.4f} s")
+
+    print(stack.shape)
+    # test adjoint
+    a = abs(np.random.normal(size=input_shape).reshape((-1)))
+    b = np.random.normal(size=stack.shape[0])
+
+    start = time.time()
+    print(np.allclose((stack(a) * b).sum(), (a * stack.adjoint(b)).sum()))
+    print(f"Evaluation time if the stacked operator time: {time.time() - start:.4f} s")

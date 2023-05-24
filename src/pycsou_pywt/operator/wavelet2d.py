@@ -194,26 +194,5 @@ class WaveletDec2(pyco.LinOp):
         return xp.asarray(A)
 
 
-# TODO test wavelet 2d and potentially extend to more dimensions, write tests: apply, adjoint
+# TODO test wavelet 2d and potentially extend to more dimensions
 # TODO test dask
-
-if __name__ == "__main__":
-    image_shape = (64, 64)
-    modes = ["zero", "symmetric"]  # Only zero padding works for auto-adjoint operator
-    wls = ["db1", "db3", "db5"]
-    levels = [1, 2, None]
-
-    # ## Test stack
-    # wl_list = pywt.wavelist('db')[:8]
-    # input_shape = (512, 512)
-    # stack = stackedWaveletDec(input_shape, wl_list, 2)
-    # print(stack._lipschitz, stack.lipschitz(recompute=True))
-    # print(stack.shape)
-    # # test adjoint
-    # a = abs(np.random.normal(size=input_shape).reshape((-1)))
-    # b = np.random.normal(size=stack.shape[0])
-    # import time
-    #
-    # start = time.time()
-    # print(np.allclose((stack(a) * b).sum(), (a * stack.adjoint(b)).sum()))
-    # print(f"Computation time: {time.time() - start:.4f} s")
