@@ -53,9 +53,10 @@ def stackedWaveletDec(
     ]
     if include_id:
         op_list.append(pycop.IdentityOp(dim=input_shape[0] * input_shape[1]))
-
     res_op = (1.0 / np.sqrt(length)) * pycop.stack(op_list, axis=0)
-    res_op._lipschitz = 1.0
+
+    if all([m == "zero" for m in mode_list]):
+        res_op._lipschitz = 1.0
 
     return res_op
 
